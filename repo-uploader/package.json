@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "script.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node dist/script.js"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +15,10 @@
     "@aws-sdk/client-s3": "^3.627.0",
     "dotenv": "^16.4.5",
     "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^2.1.4",
+    "@types/node": "^22.2.0",
+    "typescript": "^5.5.4"
   }
 }
