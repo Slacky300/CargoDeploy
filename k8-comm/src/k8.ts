@@ -1,93 +1,57 @@
 const k8s = require('@kubernetes/client-node');
+const { v4: uuidv4 } = require('uuid'); 
 
 const kc = new k8s.KubeConfig();
-kc.loadFromDefault();  
+kc.loadFromDefault();
 
-const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+const batchApi = kc.makeApiClient(k8s.BatchV1Api);
 
-const deployment = {
-    apiVersion: 'apps/v1',
-    kind: 'Deployment',
-    metadata: {
-        name: 'my-nodejs-app',
-    },
-    spec: {
-        replicas: 1,
-        selector: {
-            matchLabels: {
-                app: 'my-nodejs-app',
-            },
-        },
-        template: {
-            metadata: {
-                labels: {
-                    app: 'my-nodejs-app',
-                },
-            },
-            spec: {
-                containers: [
-                    {
-                        name: 'my-nodejs-container',
-                        image: 'rehman300/container-deploy:v0.3',
-                        ports: [
-                            {
-                                containerPort: 8080,
-                            },
-                        ],
-                        env: [
-                            { name: 'GIT_REPOSITORY__URL', value: 'https://github.com/Saurabh-Rana17/sewer-monitoring-system-client.git' },
-                            { name: 'PROJECT_ID', value: 'p9' },
-                        ],
-                    },
-                ],
-            },
-        },
-    },
-};
+const createJob = async () => {
+    const uniqueId = uuidv4(); 
+    const jobName = `s3-upload-job-${uniqueId}`;
 
-const createDeployment = async () => {
-    const appsApi = kc.makeApiClient(k8s.AppsV1Api);
-    try {
-        await appsApi.createNamespacedDeployment('default', deployment);
-        console.log('Deployment created successfully');
-    } catch (err) {
-        console.error('Error creating deployment:', err);
-    }
-};
-
-const createService = async () => {
-    const service = {
-        apiVersion: 'v1',
-        kind: 'Service',
+    const job = {
+        apiVersion: 'batch/v1',
+        kind: 'Job',
         metadata: {
-            name: 'my-nodejs-service',
+            name: jobName,
         },
         spec: {
-            selector: {
-                app: 'my-nodejs-app',
-            },
-            ports: [
-                {
-                    protocol: 'TCP',
-                    port: 80,
-                    targetPort: 8080,
+            template: {
+                metadata: {
+                    labels: {
+                        job: jobName,
+                    },
                 },
-            ],
-            type: 'NodePort', 
+                spec: {
+                    containers: [
+                        {
+                            name: 's3-upload-container',
+                            image: 'rehman300/container-deploy:v0.3',
+                            env: [
+                                { name: 'GIT_REPOSITORY__URL', value: 'https://github.com/Saurabh-Rana17/sewer-monitoring-system-client.git' },
+                                { name: 'PROJECT_ID', value: 'p9' },
+                            ],
+                        },
+                    ],
+                    restartPolicy: 'Never',
+                },
+            },
+            backoffLimit: 4,
         },
     };
 
     try {
-        await k8sApi.createNamespacedService('default', service);
-        console.log('Service created successfully');
+        await batchApi.createNamespacedJob('default', job);
+        console.log(`Job ${jobName} created successfully`);
     } catch (err) {
-        console.error('Error creating service:', err);
+        console.error('Error creating Job:', err);
+        throw err;
     }
 };
 
 const main = async () => {
-    await createDeployment();
-    await createService();
+    await createJob();
 };
 
-main();
+main().catch((err) => console.error('Script failed:', err));
