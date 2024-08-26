@@ -39,6 +39,7 @@ This project demonstrates an automated process of deploying a React application 
       ```bash
       kubectl delete job <job-name> --namespace <namespace> --cascade=foreground
       ```
+    - the `--namespace` flag is not compulsory the default value of namespace is `default` only so unless you're working on a different namespace the `--namespace flag` is not required
     - A new script can be added to check if the Job has completed and then delete it automatically.
 
 ## 🔮 Future Enhancements:
