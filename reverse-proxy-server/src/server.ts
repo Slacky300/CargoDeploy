@@ -14,6 +14,9 @@ const proxy = httpProxy.createProxyServer();
 app.use((req: Request, res: Response) => {
     const hostname = req.hostname;
     const subdomain = hostname.split('.')[0];
+    if(subdomain === 'cargodeploy'){
+        return res.send('Welcome to Cargo Deploy');
+    }
     console.log('Subdomain:', subdomain);
 
     const resolvesTo = `${BASE_PATH}/${subdomain}`;
