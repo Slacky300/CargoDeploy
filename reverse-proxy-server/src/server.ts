@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = 8000;
+const PORT = 8090;
 
 const BASE_PATH = process.env.S3_BUCKET_FOLDER_URL;
 
@@ -14,7 +14,9 @@ const proxy = httpProxy.createProxyServer();
 app.use((req: Request, res: Response) => {
     const hostname = req.hostname;
     const subdomain = hostname.split('.')[0];
-    console.log('Subdomain:', subdomain);
+    if(subdomain === 'cargodeploy'){
+        return res.send('Welcome to Cargo Deploy');
+    }
 
     const resolvesTo = `${BASE_PATH}/${subdomain}`;
 

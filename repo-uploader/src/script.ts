@@ -1,4 +1,4 @@
-import { exec, ExecException } from "child_process";
+import { exec } from "child_process";
 import path from "path";
 import fs from "fs";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -6,7 +6,6 @@ import mime from "mime-types";
 import { fileURLToPath } from "url";
 import { S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } from "./constants.js";
 
-// Recreate __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -28,10 +27,8 @@ async function uploadDirectory(directoryPath: string, s3Prefix: string) {
     const s3Key = path.join(s3Prefix, item.name).replace(/\\/g, "/");
 
     if (item.isDirectory()) {
-      // Recursively upload the directory
       await uploadDirectory(fullPath, s3Key);
     } else if (item.isFile()) {
-      // Upload the file
       console.log("Uploading", fullPath);
 
       const command = new PutObjectCommand({
@@ -52,30 +49,41 @@ async function uploadDirectory(directoryPath: string, s3Prefix: string) {
   }
 }
 
+async function buildInDocker(rootDir: string) {
+  return new Promise<void>((resolve, reject) => {
+    const buildCommand = `
+      docker run --rm -v ${rootDir}:/app -w /app node:16-alpine sh -c "npm install && npm run build"
+    `;
+
+    const buildProcess = exec(buildCommand);
+
+    if (!buildProcess.stdout || !buildProcess.stderr) {
+      return reject(new Error("Failed to start the build process"));
+    }
+
+    buildProcess.stdout.on("data", (data: string) => {
+      console.log(data.toString());
+    });
+
+    buildProcess.stderr.on("data", (data: string) => {
+      console.error(data.toString());
+    });
+
+    buildProcess.on("close", (code: number) => {
+      if (code !== 0) {
+        return reject(new Error(`Build process exited with code ${code}`));
+      }
+      resolve();
+    });
+  });
+}
+
 async function init() {
   console.log("Executing script.js");
-  const outDirPath = path.join(__dirname, "../output");
+  const rootDirPath = path.join(__dirname, "../output");
 
-  const p = exec(`cd ${outDirPath} && npm install && npm run build`);
-
-  if (!p.stdout || !p.stderr) {
-    console.error("Failed to start the build process");
-    return;
-  }
-
-  p.stdout.on("data", (data: string) => {
-    console.log(data.toString());
-  });
-
-  p.stderr.on("error", (error: ExecException | null, data: string) => {
-    console.error("Error", data.toString(), error);
-  });
-
-  p.on("close", async (code: number) => {
-    if (code !== 0) {
-      console.error(`Build process exited with code ${code}`);
-      return;
-    }
+  try {
+    await buildInDocker(rootDirPath);
 
     console.log("Build Complete");
 
@@ -83,7 +91,7 @@ async function init() {
     let distFolderPath: string | null = null;
 
     for (const folder of possibleFolders) {
-      const possibleFolderPath = path.join(__dirname, "../output", folder);
+      const possibleFolderPath = path.join(rootDirPath, folder);
       if (fs.existsSync(possibleFolderPath)) {
         distFolderPath = possibleFolderPath;
         break;
@@ -91,14 +99,14 @@ async function init() {
     }
 
     if (!distFolderPath) {
-      console.error("Neither 'dist' nor 'build' folder found!");
-      return;
+      throw new Error("Neither 'dist' nor 'build' folder found!");
     }
 
     await uploadDirectory(distFolderPath, `__outputs/${PROJECT_ID}`);
-
-    console.log("Done...");
-  });
+    console.log("Upload Complete");
+  } catch (err) {
+    console.error("Process failed:", err);
+  }
 }
 
 init().catch((err) => console.error("Initialization failed:", err));
