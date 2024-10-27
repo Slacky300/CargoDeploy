@@ -17,6 +17,7 @@ app.use((req: Request, res: Response) => {
     if(subdomain === 'cargodeploy'){
         return res.send('Welcome to Cargo Deploy');
     }
+    console.log('Subdomain:', subdomain);
 
     const resolvesTo = `${BASE_PATH}/${subdomain}`;
 
