@@ -7,9 +7,9 @@ const app = express();
 app.use(express.json());
 
 app.post('/deploy', async (req: Request, res: Response) => {
-    const { git_url, project_id, root_folder } = req.body;
+    const { git_url, project_id, root_folder, env_variables } = req.body; // Accepting env_variables
     try {
-        await createJob(git_url, project_id, root_folder);
+        await createJob(git_url, project_id, root_folder, env_variables); // Pass env_variables to createJob
         res.status(200).json({ message: 'Job Created Successfully' });
     } catch (err) {
         logger.error('Error creating job via API:', err);

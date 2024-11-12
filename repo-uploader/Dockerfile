@@ -26,6 +26,8 @@ RUN npx tsc
 # Make the scripts executable
 RUN chmod +x exec.sh
 RUN chmod +x dist/script.js
+RUN chmod +x src/script.ts
+RUN chmod +x package.json
 
 # Set the entrypoint to execute the shell script
 ENTRYPOINT [ "/home/app/exec.sh" ]

@@ -9,18 +9,22 @@ const proxy = httpProxy.createProxyServer();
 app.use((req, res) => {
     const hostname = req.hostname;
     const subdomain = hostname.split('.')[0];
-    if (subdomain === 'cargodeploy') {
-        return res.send('Welcome to Cargo Deploy');
-    }
     console.log('Subdomain:', subdomain);
     const resolvesTo = `${BASE_PATH}/${subdomain}`;
-    proxy.web(req, res, { target: resolvesTo, changeOrigin: true });
+    // Check if the request URL has a file extension
+    if (req.url && req.url.includes('.')) {
+        proxy.web(req, res, { target: resolvesTo, changeOrigin: true });
+    }
+    else {
+        // Serve index.html for any route that does not include a file extension
+        req.url = '/index.html';
+        proxy.web(req, res, { target: resolvesTo, changeOrigin: true });
+    }
 });
-// @ts-ignore: Ignore TypeScript type checking for this block
 proxy.on('proxyReq', (proxyReq, req, res) => {
-    const url = req.url;
-    if (url === '/') {
-        proxyReq.path += 'index.html';
+    // Adjust the path if it is the root URL
+    if (proxyReq.path === '/') {
+        proxyReq.path = '/index.html';
     }
 });
 app.listen(PORT, () => console.log(`Reverse Proxy Running on port ${PORT}`));

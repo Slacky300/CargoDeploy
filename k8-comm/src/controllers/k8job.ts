@@ -70,7 +70,12 @@ const getPodLogs = async (podName: string): Promise<void> => {
     }
 };
 
-export const createJob = async (git_url: string, project_id: string, root_folder: string): Promise<void> => {
+export const createJob = async (
+    git_url: string,
+    project_id: string,
+    root_folder: string,
+    env_variables: Array<{ name: string, value: string }>, // Accepting environment variables
+): Promise<void> => {
     const uniqueId = uuidv4();
     const jobName = `s3-upload-job-${uniqueId}`;
 
@@ -96,6 +101,7 @@ export const createJob = async (git_url: string, project_id: string, root_folder
                                 { name: 'GIT_REPOSITORY__URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
                                 { name: 'SOURCE_DIRECTORY', value: root_folder },
+                                ...env_variables.map(envVar => ({ name: envVar.name, value: envVar.value }))
                             ],
                         },
                     ],

@@ -4,6 +4,9 @@ This project demonstrates an automated process of deploying a React application 
 
 ## 🛠️ Tech Stack
 
+
+docker run -it -e PROJECT_ID=kaka -e GIT_REPOSITORY__URL=https://github.com/AdityaShah7867/M-E-R-N-ECOMMERCE.git -e SOURCE_DIRECTORY=client repouploader:v0.4
+
 - **Kubernetes**: Orchestrates containerized applications across multiple nodes, managing the deployment, scaling, and operations of the containers.
 - **Docker**: Containerizes the application to ensure consistent environments across various stages of the build and deployment process.
 - **Node.js & Express.js**: Used for writing the reverse proxy server, which serves the React app based on subdomains.
@@ -76,3 +79,16 @@ This project demonstrates an automated process of deploying a React application 
   - Ensure that all dependencies are correctly installed and configured.
   - If a Job fails to execute, check the Kubernetes logs for detailed error messages.
   - Use the cleanup command to remove any orphaned resources and re-deploy if necessary.
+
+## Sample Payload
+
+```json
+{
+  "git_url": "https://github.com/Slacky300/IOE.git",
+  "project_id": "ioenoob",
+  "root_folder": "dashboard",
+   "env_variables": [
+        { "name": "VITE_API_URL", "value": "http://139.59.62.183:8060" }
+        ]
+}
+```
