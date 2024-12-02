@@ -74,10 +74,11 @@ export const createJob = async (
     git_url: string,
     project_id: string,
     root_folder: string,
-    env_variables: Array<{ name: string, value: string }>, // Accepting environment variables
+    env_variables: Array<{ name: string, value: string }>,
 ): Promise<void> => {
     const uniqueId = uuidv4();
     const jobName = `s3-upload-job-${uniqueId}`;
+    const containerName: string = `s3-upload-container-${uniqueId}`
 
     const job = {
         apiVersion: 'batch/v1',
@@ -86,6 +87,8 @@ export const createJob = async (
             name: jobName,
         },
         spec: {
+
+
             template: {
                 metadata: {
                     labels: {
@@ -95,8 +98,8 @@ export const createJob = async (
                 spec: {
                     containers: [
                         {
-                            name: 's3-upload-container',
-                            image: 'rehman300/container-deploy:v0.3',
+                            name: containerName,
+                            image: process.env.IMAGE_NAME,
                             env: [
                                 { name: 'GIT_REPOSITORY__URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
@@ -122,7 +125,7 @@ export const createJob = async (
         }
 
         await getPodLogs(podName);
-        await getContainerLogs('default', podName, 's3-upload-container');
+        await getContainerLogs('default', podName, containerName);
 
     } catch (err) {
         logger.error('Error creating Job:', err);
