@@ -1,5 +1,4 @@
 import express from 'express';
-import authRoutes from './routes/auth.routes.js';
 import jobRoutes from './routes/job.routes.js'
 import { errorHandler } from './middlewares/errorHandler.middleware.js';
 import { connectDB } from './utils/dbConnect.js';
@@ -12,7 +11,6 @@ const PORT = process.env.PORT ?? 8080;
 app.use(express.json());
 
 
-app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/jobs', jobRoutes);
 app.use(errorHandler);
 
