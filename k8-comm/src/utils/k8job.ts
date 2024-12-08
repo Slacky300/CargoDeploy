@@ -75,6 +75,7 @@ export const createJob = async (
     project_id: string,
     root_folder: string,
     env_variables: Array<{ name: string, value: string }>,
+    access_token?: string,
 ): Promise<void> => {
     const uniqueId = uuidv4();
     const jobName = `s3-upload-job-${uniqueId}`;
@@ -101,9 +102,10 @@ export const createJob = async (
                             name: containerName,
                             image: process.env.IMAGE_NAME,
                             env: [
-                                { name: 'GIT_REPOSITORY__URL', value: git_url },
+                                { name: 'GIT_REPOSITORY_URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
                                 { name: 'SOURCE_DIRECTORY', value: root_folder },
+                                { name: 'ACCESS_TOKEN', value: access_token },
                                 ...env_variables.map(envVar => ({ name: envVar.name, value: envVar.value }))
                             ],
                         },
