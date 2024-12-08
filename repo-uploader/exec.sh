@@ -3,6 +3,7 @@
 export GIT_REPOSITORY_URL="$GIT_REPOSITORY_URL"
 export SOURCE_DIRECTORY="$SOURCE_DIRECTORY"
 export ACCESS_TOKEN="$ACCESS_TOKEN"
+export BRANCH="${BRANCH:-master}" 
 
 if [ -z "$GIT_REPOSITORY_URL" ] || [ -z "$SOURCE_DIRECTORY" ]; then
   echo "❌ Error: Missing required environment variables."
@@ -28,8 +29,8 @@ else
   echo "🔓 No access token provided. Using the original URL to clone."
 fi
 
-echo "🚀 Cloning repository from $AUTHENTICATED_URL..."
-git clone "$AUTHENTICATED_URL" /home/app/repo || {
+echo "🚀 Cloning repository from branch '$BRANCH' at $AUTHENTICATED_URL..."
+git clone --branch "$BRANCH" "$AUTHENTICATED_URL" /home/app/repo || {
   echo "❌ Error: Failed to clone the repository."
   exit 1
 }
