@@ -75,6 +75,7 @@ export const createJob = async (
     project_id: string,
     root_folder: string,
     env_variables: Array<{ name: string, value: string }>,
+    branch: string,
     access_token?: string,
 ): Promise<void> => {
     const uniqueId = uuidv4();
@@ -105,6 +106,7 @@ export const createJob = async (
                                 { name: 'GIT_REPOSITORY_URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
                                 { name: 'SOURCE_DIRECTORY', value: root_folder },
+                                { name: 'BRANCH', value: branch },
                                 { name: 'ACCESS_TOKEN', value: access_token },
                                 ...env_variables.map(envVar => ({ name: envVar.name, value: envVar.value }))
                             ],
