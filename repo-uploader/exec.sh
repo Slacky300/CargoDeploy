@@ -57,3 +57,4 @@ exec node dist/script.js || {
   echo "❌ Error: Failed to execute script.js."
   exit 1
 }
+

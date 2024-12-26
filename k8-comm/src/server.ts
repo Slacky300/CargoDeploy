@@ -5,10 +5,17 @@ import { connectDB } from './utils/dbConnect.js';
 import Redis from 'ioredis';
 import dotenv from 'dotenv';
 import { Server } from 'socket.io';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors(
+    {
+        origin: '*'
+    }
+));
 
 const PORT = process.env.PORT || 8080;
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
@@ -34,6 +41,10 @@ const isSubscriberConnected = async () => {
     });
 };
 
+app.get('/', (req, res) => {
+    res.json({ message: 'Cargo Deploy Job Server 🚚' });
+});
+
 const start = async () => {
     try {
         await connectDB(MONGODB_URI);
@@ -55,25 +66,35 @@ const start = async () => {
         const io = new Server(server, { cors: { origin: '*' } });
 
         io.on('connection', (socket) => {
-            const { projectId } = socket.handshake.query;
-            if (!projectId) {
-                console.warn('Client connected without projectId. Disconnecting...');
-                socket.disconnect(true);
-                return;
-            }
+            
+            console.log('Client connected to server' , socket.id);
 
-            socket.join(projectId);
-            console.log(`Client connected to logs for project: ${projectId}`);
-
-            socket.on('disconnect', () => {
-                console.log(`Client disconnected from logs of project: ${projectId}`);
+            socket.on('join', (deploymentId) => {
+                console.log(`Client joined deployment: ${deploymentId}`);
+                socket.join(deploymentId);
+                io.to(deploymentId).emit('logUpdate', { deploymentId, logs: 'Client joined the deployment' });
+            });
+        
+            socket.on('disconnect', (deploymentId) => {
+                console.log(`Client disconnected from deployment: ${deploymentId}`);
             });
         });
-
+        
+        // Move the subscriber event listener outside to avoid duplication
         subscriber.on('pmessage', (pattern, channel, message) => {
-            const projectId = channel.split(':')[1]; // Extract projectId from channel
-            io.to(projectId).emit('logUpdate', { projectId, logs: message });
+            const deploymentId = channel.split(':')[1];
+            console.log(`Sending logs to deployment: ${deploymentId}`);
+            io.to(deploymentId).emit('logUpdate', { deploymentId, logs: message });
         });
+        
+        // Graceful shutdown
+        process.on('SIGINT', async () => {
+            console.log('Shutting down server...');
+            await subscriber.quit();
+            process.exit(0);
+        });
+        
+     
 
     } catch (err: any) {
         console.error('Error during server startup:', err.message);

@@ -13,6 +13,7 @@ const coreApi = kc.makeApiClient(k8s.CoreV1Api);
 
 const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
+console.log(process.env.IMAGE_NAME);
 
 redis.on('connect', () => {
     console.log('Publisher connected to Redis 🚀');
@@ -101,13 +102,19 @@ export const createJob = async (
     root_folder: string,
     env_variables: Array<{ name: string, value: string }>,
     branch: string,
+    deploymentId: string,
     access_token?: string,
+    name?: string,
 ): Promise<void> => {
     const uniqueId = uuidv4();
     const jobName = `s3-upload-job-${uniqueId}`;
     const containerName: string = `s3-upload-container-${uniqueId}`
-    const channelName = `logs:${project_id}`;
+    const channelName = `logs:${deploymentId}`;
 
+    console.log("project_name", name);
+
+    console.log('Creating job:', jobName);
+    console.log("channelName", channelName);
 
     const job = {
         apiVersion: 'batch/v1',
@@ -128,7 +135,7 @@ export const createJob = async (
                     containers: [
                         {
                             name: containerName,
-                            image: process.env.IMAGE_NAME,
+                            image: "rehman300/container-deploy:v0.5",
                             env: [
                                 { name: 'GIT_REPOSITORY_URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
