@@ -7,7 +7,7 @@ export const createProject = expressAsyncHandler(async (req: Request, res: Respo
     const { git_url, project_id, root_folder, env_variables, name, access_token, branch, deploymentId } = req.body; 
     console.log(env_variables)
 
-    await createJob(git_url, project_id, root_folder, env_variables, branch, deploymentId,access_token, name); 
+    const stats = await createJob(git_url, project_id, root_folder, env_variables, branch, deploymentId,access_token, name); 
     //send an email to the user
-    return sendResponse(res, 200, {message: `${name} workflow has started`});
+    return sendResponse(res, 200, {message: `Job completed successfully`, data: stats});
 });

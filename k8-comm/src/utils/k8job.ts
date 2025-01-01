@@ -21,7 +21,7 @@ redis.on('connect', () => {
 
 const publishLogs = async (slug: string, logs: any) => {
     try {
-        const chunkSize = 1024; 
+        const chunkSize = 1024;
         for (let i = 0; i < logs.length; i += chunkSize) {
             const chunk = logs.slice(i, i + chunkSize);
             await redis.publish(slug, chunk);
@@ -31,13 +31,31 @@ const publishLogs = async (slug: string, logs: any) => {
     }
 };
 
-const getContainerLogs = async (podNamespace: string, podName: string, containerName: string, channelName: string) => {
+const streamContainerLogs = async (namespace: string, podName: string, containerName: string, channelName: string) => {
     try {
-        const podLogs = await coreApi.readNamespacedPodLog(podName, podNamespace, containerName, true);
-        logger.info(`Logs from container ${containerName} in pod ${podName}:\n${podLogs.body}`);
-        publishLogs(channelName, `Logs from container ${containerName} in pod ${podName}:\n${podLogs.body}`);
+        const logStream = new k8s.Log(kc);
+        const logOptions = {
+            follow: true,
+            tailLines: 10,
+        };
+
+        const log = await logStream.log(namespace, podName, containerName, process.stdout, logOptions);
+
+        log.on('data', async (chunk: any) => {
+            const logData = chunk.toString('utf8');
+            logger.info(logData);
+            await publishLogs(channelName, logData);
+        });
+
+        log.on('error', (error: any) => {
+            logger.error(`Error streaming logs for container ${containerName}:`, error);
+        });
+
+        log.on('end', () => {
+            logger.info(`Finished streaming logs for container ${containerName}`);
+        });
     } catch (error) {
-        logger.error(`Error fetching logs for container ${containerName}:`, error);
+        logger.error(`Error streaming logs for container ${containerName}:`, error);
     }
 };
 
@@ -69,12 +87,11 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
         if (phase === 'Running' && containersReady) {
             podReady = true;
         } else if (phase === 'Succeeded' || phase === 'Failed') {
-            // Pod has completed or failed, stop waiting
             podReady = true;
         } else {
             logger.info(`Waiting for pod ${podName} to be ready...`);
-            publishLogs(channelName, `Waiting for pod ${podName} to be ready...`);
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds before retrying
+            await publishLogs(channelName, `Waiting for pod ${podName} to be ready...`);
+            await new Promise(resolve => setTimeout(resolve, 5000));
         }
     }
 };
@@ -96,6 +113,26 @@ const getPodLogs = async (podName: string, project_id: string): Promise<void> =>
     }
 };
 
+const updateDeploymentStatus = async (channelName: string, deploymentId: string, status: string): Promise<void> => {
+    try {
+        const nextResult = await fetch(`http://localhost:3000/api/deployment?deploymentIdWithStatus=${deploymentId}-${status}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": "skapi_EBYdfafaav0dPC0iPdfaZeW4bTpaRJ66eXen2lB"
+            },
+        });
+        const nextData = await nextResult.json();
+        if (nextResult.status === 200) {
+            console.log(nextData);
+            publishLogs(channelName, `${status}`);
+        }
+    } catch (error) {
+        logger.error('Error updating deployment status:', error);
+        throw error;
+    }
+}
+
 export const createJob = async (
     git_url: string,
     project_id: string,
@@ -108,7 +145,7 @@ export const createJob = async (
 ): Promise<void> => {
     const uniqueId = uuidv4();
     const jobName = `s3-upload-job-${uniqueId}`;
-    const containerName: string = `s3-upload-container-${uniqueId}`
+    const containerName: string = `s3-upload-container-${uniqueId}`;
     const channelName = `logs:${deploymentId}`;
 
     console.log("project_name", name);
@@ -123,8 +160,6 @@ export const createJob = async (
             name: jobName,
         },
         spec: {
-
-
             template: {
                 metadata: {
                     labels: {
@@ -135,7 +170,7 @@ export const createJob = async (
                     containers: [
                         {
                             name: containerName,
-                            image: "rehman300/container-deploy:v0.5",
+                            image: process.env.IMAGE_NAME || "rehman300/container-deploy:v0.5",
                             env: [
                                 { name: 'GIT_REPOSITORY_URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
@@ -156,7 +191,7 @@ export const createJob = async (
     try {
         await batchApi.createNamespacedJob('default', job);
         logger.info(`Job ${jobName} created successfully`);
-        publishLogs(channelName, `Job ${jobName} created successfully`);
+        await publishLogs(channelName, `Job ${jobName} created successfully`);
 
         const podName = await getPodName(jobName);
         if (!podName) {
@@ -164,10 +199,12 @@ export const createJob = async (
         }
 
         await getPodLogs(podName, project_id);
-        await getContainerLogs('default', podName, containerName, channelName);
+        await streamContainerLogs('default', podName, containerName, channelName);
+        await updateDeploymentStatus(channelName, deploymentId, "SUCCESS");
 
     } catch (err) {
         logger.error('Error creating Job:', err);
+        await updateDeploymentStatus(channelName, deploymentId, "FAILED");
         throw err;
     }
 };
