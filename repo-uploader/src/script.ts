@@ -28,11 +28,10 @@ async function uploadDirectory(directoryPath: string, s3Prefix: string) {
     const s3Key = path.join(s3Prefix, item.name).replace(/\\/g, "/");
 
     if (item.isDirectory()) {
-      // Recursively upload the directory
+      console.log(`📂 Processing directory: ${item.name}`);
       await uploadDirectory(fullPath, s3Key);
     } else if (item.isFile()) {
-      // Upload the file
-      console.log("Uploading", fullPath);
+      console.log(`📄 Uploading file: ${item.name}`);
 
       const command = new PutObjectCommand({
         Bucket: "build007-images",
@@ -43,9 +42,9 @@ async function uploadDirectory(directoryPath: string, s3Prefix: string) {
 
       try {
         await s3Client.send(command);
-        console.log("Uploaded file", fullPath);
+        console.log(`✅ Successfully uploaded: ${item.name}`);
       } catch (err) {
-        console.error("Error uploading file:", err);
+        console.error(`❌ Failed to upload: ${item.name}`);
         throw err;
       }
     }
@@ -53,31 +52,33 @@ async function uploadDirectory(directoryPath: string, s3Prefix: string) {
 }
 
 async function init() {
-  console.log("Executing script.js");
+  console.log("🚀 Starting deployment process...");
+
   const outDirPath = path.join(__dirname, "../output");
 
+  console.log("🔄 Running build process. Please wait...");
   const p = exec(`cd ${outDirPath} && npm install && npm run build`);
 
   if (!p.stdout || !p.stderr) {
-    console.error("Failed to start the build process");
+    console.error("⚠️ Failed to initialize the build process. Please check your setup.");
     return;
   }
 
   p.stdout.on("data", (data: string) => {
-    console.log(data.toString());
+    console.log(`ℹ️ Build log: ${data.toString()}`);
   });
 
-  p.stderr.on("error", (error: ExecException | null, data: string) => {
-    console.error("Error", data.toString(), error);
+  p.stderr.on("data", (data: string) => {
+    console.error(`⚠️ Build error: ${data.toString()}`);
   });
 
   p.on("close", async (code: number) => {
     if (code !== 0) {
-      console.error(`Build process exited with code ${code}`);
+      console.error(`❌ Build process exited with code ${code}. Please check the logs for more details.`);
       return;
     }
 
-    console.log("Build Complete");
+    console.log("✅ Build process completed successfully.");
 
     const possibleFolders = ["dist", "build"];
     let distFolderPath: string | null = null;
@@ -91,14 +92,22 @@ async function init() {
     }
 
     if (!distFolderPath) {
-      console.error("Neither 'dist' nor 'build' folder found!");
+      console.error("⚠️ Deployment folder not found! Ensure the build script generates a 'dist' or 'build' folder.");
       return;
     }
 
-    await uploadDirectory(distFolderPath, `__outputs/${PROJECT_ID}`);
+    console.log(`📂 Found build folder: ${distFolderPath}`);
+    console.log("🔄 Uploading files to the cloud. This may take a moment...");
 
-    console.log("Done...");
+    try {
+      await uploadDirectory(distFolderPath, `__outputs/${PROJECT_ID}`);
+      console.log("✅ All files successfully uploaded to the cloud.");
+    } catch (err) {
+      console.error("❌ An error occurred during the upload process. Please try again.");
+    }
+
+    console.log("🎉 Deployment process completed!");
   });
 }
 
-init().catch((err) => console.error("Initialization failed:", err));
+init().catch((err) => console.error("❌ Deployment initialization failed:", err));

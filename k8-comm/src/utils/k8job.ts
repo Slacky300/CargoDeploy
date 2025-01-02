@@ -59,22 +59,28 @@ const streamContainerLogs = async (namespace: string, podName: string, container
     }
 };
 
-const getPodName = async (jobName: string): Promise<string> => {
+const getPodName = async (jobName: string, retries = 5, delay = 5000): Promise<string> => {
     try {
         const labelSelector = `job-name=${jobName}`;
-        const pods = await coreApi.listNamespacedPod('default', undefined, undefined, undefined, undefined, labelSelector);
+        for (let i = 0; i < retries; i++) {
+            const pods = await coreApi.listNamespacedPod('default', undefined, undefined, undefined, undefined, labelSelector);
 
-        if (pods.body.items.length === 0) {
-            logger.error('No pods found for the job');
-            return '';
+            if (pods.body.items.length > 0) {
+                return pods.body.items[0].metadata?.name || '';
+            }
+
+            logger.info(`No pods found for the job ${jobName}. Retrying (${i + 1}/${retries})...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
 
-        return pods.body.items[0].metadata?.name || '';
+        logger.error(`No pods found for the job ${jobName} after ${retries} retries.`);
+        return '';
     } catch (error) {
         logger.error('Error fetching pod name:', error);
         return '';
     }
 };
+
 
 const waitForPodReady = async (podName: string, namespace = 'default', channelName: string) => {
     let podReady = false;
@@ -170,7 +176,7 @@ export const createJob = async (
                     containers: [
                         {
                             name: containerName,
-                            image: process.env.IMAGE_NAME || "rehman300/container-deploy:v0.5",
+                            image: process.env.IMAGE_NAME || "rehman300/container-deploy:v0.7",
                             env: [
                                 { name: 'GIT_REPOSITORY_URL', value: git_url },
                                 { name: 'PROJECT_ID', value: project_id },
