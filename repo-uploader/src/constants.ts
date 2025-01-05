@@ -5,6 +5,7 @@ dotenv.config();
 export const S3_REGION: string = process.env.S3_REGION || '';
 export const S3_ACCESS_KEY_ID: string = process.env.S3_ACCESS_KEY || '';
 export const S3_SECRET_ACCESS_KEY: string = process.env.S3_SECRET_ACCESS_KEY || '';
+export const REDIS_URL: string = process.env.REDIS_URL || '';
 
 
 

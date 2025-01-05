@@ -5,6 +5,7 @@ dotenv.config();
 const app = express();
 const PORT = 8090;
 const BASE_PATH = process.env.S3_BUCKET_FOLDER_URL;
+app.use(express.json());
 const proxy = httpProxy.createProxyServer();
 app.use((req, res) => {
     const hostname = req.hostname;
@@ -27,4 +28,4 @@ proxy.on('proxyReq', (proxyReq, req, res) => {
         proxyReq.path = '/index.html';
     }
 });
-app.listen(PORT, () => console.log(`Reverse Proxy Running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Reverse Proxy Running on port ${PORT}`));
