@@ -15,12 +15,13 @@ const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
 console.log(process.env.IMAGE_NAME);
 const logsToPublish: string[] = [];
+const CHUNK_SIZE = 1024; // Define the chunk size
 
 redis.on('connect', () => {
     console.log('Publisher connected to Redis 🚀');
 });
 
-const triggerWebHookForSendingMails = async (status: string) => {
+const triggerWebHookForSendingMails = async (email:string, status: string) => {
     try {
         const res = await fetch(`${process.env.N8N_WEBHOOK_URL}`, {
             method: 'POST',
@@ -29,6 +30,7 @@ const triggerWebHookForSendingMails = async (status: string) => {
             },
             body: JSON.stringify({
                 status: status,
+                email: email,
                 subject: `Deployment ${status.toUpperCase()}`,
                 body: `<!DOCTYPE html>
                 <html>
@@ -127,7 +129,14 @@ const triggerWebHookForSendingMails = async (status: string) => {
                 </html>
                 `
             })
-        })
+        });
+        const data = await res.json();
+        if (res.status === 200) {
+            console.log(data);
+        } else {
+            console.log(data);
+            console.log('Error triggering webhook');
+        }
     } catch (error) {
         logger.error('Error triggering webhook:', error);
     }
@@ -154,62 +163,61 @@ const saveLogsToDatabase = async (logs: string[], deploymentId: string) => {
         logger.error('Error saving logs to database:', error);
     }
 }
-
-const publishLogs = async (slug: string, logs: any) => {
+const publishLogs = async (channel: string, logs: string) => {
     try {
-        const chunkSize = 1024;
-        for (let i = 0; i < logs.length; i += chunkSize) {
-            const chunk = logs.slice(i, i + chunkSize);
-            await redis.publish(slug, chunk);
-            logsToPublish.push(chunk);
-        }
+        const chunks = logs.match(new RegExp(`.{1,${CHUNK_SIZE}}`, 'g')) || [];
+        logsToPublish.push(...chunks);
+        await Promise.all(chunks.map(chunk => redis.publish(channel, chunk)));
     } catch (error) {
         logger.error('Error publishing logs to Redis:', error);
     }
 };
 
-const streamContainerLogs = async (namespace: string, podName: string, containerName: string, channelName: string) => {
+
+
+const streamContainerLogs = async (namespace: string, podName: string, containerName: string, channel: string, email: string) => {
     try {
         const logStream = new k8s.Log(kc);
-        const logOptions = {
-            follow: true,
-            tailLines: 10,
-        };
+        const options = { follow: true, tailLines: 10 };
 
-        const log = await logStream.log(namespace, podName, containerName, process.stdout, logOptions);
+        const stream = await logStream.log(namespace, podName, containerName, process.stdout, options);
 
-        log.on('data', async (chunk: any) => {
-            const logData = chunk.toString('utf8');
-            logger.info(logData);
-            await publishLogs(channelName, logData);
+        stream.on('data', async (chunk: Buffer) => {
+            const log = chunk.toString();
+            logger.info(log);
+            await publishLogs(channel, log);
         });
 
-        log.on('error', async (error: any) => {
-            logger.error(`Error streaming logs for container ${containerName}:`, error);
-            await publishLogs(channelName, `Error streaming logs: ${error.message}`);
-            await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
+        stream.on('error', async (error: Error) => {
+            logger.error(`Error streaming logs for ${containerName}:`, error);
+            publishLogs(channel, `Error streaming logs for ${containerName}: ${error.message}`);
+            await updateDeploymentStatus(channel, channel.split(":")[1], "FAILED", email);
         });
 
-        log.on('end', async () => {
+        stream.on('end', async () => {
             const pod = await coreApi.readNamespacedPod(podName, namespace);
-            if (pod.body.status?.phase === 'Failed') {
+            const podPhase = pod.body.status?.phase;
+            if (podPhase === 'Failed') {
                 logger.error(`Pod ${podName} failed.`);
-                await publishLogs(channelName, `Pod ${podName} failed.`);
-                await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
-                await triggerWebHookForSendingMails("failed");
+                publishLogs(channel, `Pod ${podName} failed.`);
+                await updateDeploymentStatus(channel, channel.split(":")[1], "FAILED", email);
             } else {
-                logger.info(`Finished streaming logs for container ${containerName}`);
-                await saveLogsToDatabase(logsToPublish, channelName.split(":")[1]);
-                await updateDeploymentStatus(channelName, channelName.split(":")[1], "SUCCESS");
-                await triggerWebHookForSendingMails("success");
+                logger.info(`Finished streaming logs for ${containerName}`);
+                publishLogs(channel, `Finished streaming logs for ${containerName}`);
+                await updateDeploymentStatus(channel, channel.split(":")[1], "SUCCESS", email);
             }
         });
     } catch (error) {
         logger.error(`Error streaming logs for container ${containerName}:`, error);
-        await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
-        await triggerWebHookForSendingMails("failed");
+        await updateDeploymentStatus(channel, channel.split(":")[1], "FAILED",email);
+        if (error instanceof Error) {
+            await publishLogs(channel, `Error streaming logs for container ${containerName}: ${error.message}`);
+        } else {
+            await publishLogs(channel, `Error streaming logs for container ${containerName}: ${String(error)}`);
+        }
     }
 };
+
 
 const getPodName = async (jobName: string, retries = 5, delay = 5000): Promise<string> => {
     try {
@@ -234,7 +242,7 @@ const getPodName = async (jobName: string, retries = 5, delay = 5000): Promise<s
 };
 
 
-const waitForPodReady = async (podName: string, namespace = 'default', channelName: string) => {
+const waitForPodReady = async (podName: string, namespace = 'default', channelName: string, email: string) => {
     let podReady = false;
     while (!podReady) {
         const pod = await coreApi.readNamespacedPod(podName, namespace);
@@ -249,8 +257,7 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
         } else if (phase === 'Failed') {
             logger.error(`Pod ${podName} failed.`);
             await publishLogs(channelName, `Pod ${podName} failed.`);
-            await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
-            await triggerWebHookForSendingMails("failed");
+            await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED", email);
             throw new Error(`Pod ${podName} failed.`);
         } else {
             logger.info(`Waiting for pod ${podName} to be ready...`);
@@ -261,27 +268,31 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
 };
 
 
-const getPodLogs = async (podName: string, project_id: string): Promise<void> => {
+const getPodLogs = async (podName: string, project_id: string, email: string): Promise<void> => {
     try {
         if (!podName) {
             logger.error('Pod name is undefined');
             return;
         }
 
-        await waitForPodReady(podName, 'default', project_id);
+        await waitForPodReady(podName, 'default', project_id, email);
 
         const logs = await coreApi.readNamespacedPodLog(podName, 'default');
         logger.info(`Logs from pod ${podName}:\n${logs.body}`);
     } catch (error) {
         logger.error('Error fetching pod logs:', error);
-        await updateDeploymentStatus(`logs:${project_id}`, project_id, "FAILED");
-        await triggerWebHookForSendingMails("failed");
+        if (error instanceof Error) {
+            publishLogs(`logs:${project_id}`, `Error fetching pod logs: ${error.message}`);
+        } else {
+            publishLogs(`logs:${project_id}`, `Error fetching pod logs: ${String(error)}`);
+        }
+        await updateDeploymentStatus(`logs:${project_id}`, project_id, "FAILED", email);
         throw error;
     }
 };
 
 
-const updateDeploymentStatus = async (channelName: string, deploymentId: string, status: string): Promise<void> => {
+const updateDeploymentStatus = async (channelName: string, deploymentId: string, status: string, email: string): Promise<void> => {
     try {
         const nextResult = await fetch(`${process.env.FRONTEND_URL}/api/deployment?deploymentIdWithStatus=${deploymentId}-${status}`, {
             method: "PATCH",
@@ -294,12 +305,16 @@ const updateDeploymentStatus = async (channelName: string, deploymentId: string,
         if (nextResult.status === 200) {
             console.log(nextData);
             publishLogs(channelName, `${status}`);
+            await saveLogsToDatabase(logsToPublish, deploymentId);
+            await triggerWebHookForSendingMails(email, status);
         }
     } catch (error) {
         logger.error('Error updating deployment status:', error);
         throw error;
     }
 }
+
+
 
 export const createJob = async (
     git_url: string,
@@ -308,6 +323,7 @@ export const createJob = async (
     env_variables: { name: string, value: string }[],
     branch: string,
     deploymentId: string,
+    email: string,
     access_token?: string,
     name?: string,
 ): Promise<void> => {
@@ -366,13 +382,17 @@ export const createJob = async (
             throw new Error('Pod name is undefined');
         }
 
-        await getPodLogs(podName, project_id);
-        await streamContainerLogs('default', podName, containerName, channelName);
+        await getPodLogs(podName, project_id,email);
+        await streamContainerLogs('default', podName, containerName, channelName, email);
 
     } catch (err) {
         logger.error('Error creating Job:', err);
-        await updateDeploymentStatus(channelName, deploymentId, "FAILED");
-        await triggerWebHookForSendingMails("failed");
+        if (err instanceof Error) {
+            await publishLogs(channelName, `Error creating Job: ${err.message}`);
+        } else {
+            await publishLogs(channelName, `Error creating Job: ${String(err)}`);
+        }
+        await updateDeploymentStatus(channelName, deploymentId, "FAILED", email);
         throw err;
     }
 };
