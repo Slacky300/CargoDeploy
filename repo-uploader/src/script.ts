@@ -6,6 +6,8 @@ import mime from "mime-types";
 import { fileURLToPath } from "url";
 import { S3_REGION, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } from "./constants.js";
 
+
+
 // Recreate __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

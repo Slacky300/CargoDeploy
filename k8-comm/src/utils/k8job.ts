@@ -14,10 +14,33 @@ const coreApi = kc.makeApiClient(k8s.CoreV1Api);
 const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
 console.log(process.env.IMAGE_NAME);
+const logsToPublish:string[] = [];
 
 redis.on('connect', () => {
     console.log('Publisher connected to Redis 🚀');
 });
+
+const saveLogsToDatabase = async (logs: string[], deploymentId: string) => {
+    try{
+        const res = await fetch(`${process.env.FRONTEND_URL}/api/logs`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': `${process.env.CLERK_KEY}`
+            },
+            body: JSON.stringify({ logs, deploymentId })
+        });
+        const data = await res.json();
+        if(res.status === 201){
+            console.log(data);
+        }else{
+            console.log(data);
+            console.log('Error saving logs to database');
+        }
+    }catch(error){
+        logger.error('Error saving logs to database:', error);
+    }
+}
 
 const publishLogs = async (slug: string, logs: any) => {
     try {
@@ -25,6 +48,7 @@ const publishLogs = async (slug: string, logs: any) => {
         for (let i = 0; i < logs.length; i += chunkSize) {
             const chunk = logs.slice(i, i + chunkSize);
             await redis.publish(slug, chunk);
+            logsToPublish.push(chunk);
         }
     } catch (error) {
         logger.error('Error publishing logs to Redis:', error);
@@ -47,15 +71,27 @@ const streamContainerLogs = async (namespace: string, podName: string, container
             await publishLogs(channelName, logData);
         });
 
-        log.on('error', (error: any) => {
+        log.on('error', async (error: any) => {
             logger.error(`Error streaming logs for container ${containerName}:`, error);
+            await publishLogs(channelName, `Error streaming logs: ${error.message}`);
+            await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
         });
 
-        log.on('end', () => {
-            logger.info(`Finished streaming logs for container ${containerName}`);
+        log.on('end', async () => {
+            const pod = await coreApi.readNamespacedPod(podName, namespace);
+            if (pod.body.status?.phase === 'Failed') {
+                logger.error(`Pod ${podName} failed.`);
+                await publishLogs(channelName, `Pod ${podName} failed.`);
+                await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
+            } else {
+                logger.info(`Finished streaming logs for container ${containerName}`);
+                await saveLogsToDatabase(logsToPublish, channelName.split(":")[1]);
+                await updateDeploymentStatus(channelName, channelName.split(":")[1], "SUCCESS");
+            }
         });
     } catch (error) {
         logger.error(`Error streaming logs for container ${containerName}:`, error);
+        await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
     }
 };
 
@@ -92,8 +128,13 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
 
         if (phase === 'Running' && containersReady) {
             podReady = true;
-        } else if (phase === 'Succeeded' || phase === 'Failed') {
+        } else if (phase === 'Succeeded') {
             podReady = true;
+        } else if (phase === 'Failed') {
+            logger.error(`Pod ${podName} failed.`);
+            await publishLogs(channelName, `Pod ${podName} failed.`);
+            await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
+            throw new Error(`Pod ${podName} failed.`);
         } else {
             logger.info(`Waiting for pod ${podName} to be ready...`);
             await publishLogs(channelName, `Waiting for pod ${podName} to be ready...`);
@@ -101,6 +142,7 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
         }
     }
 };
+
 
 const getPodLogs = async (podName: string, project_id: string): Promise<void> => {
     try {
@@ -115,17 +157,19 @@ const getPodLogs = async (podName: string, project_id: string): Promise<void> =>
         logger.info(`Logs from pod ${podName}:\n${logs.body}`);
     } catch (error) {
         logger.error('Error fetching pod logs:', error);
+        await updateDeploymentStatus(`logs:${project_id}`, project_id, "FAILED");
         throw error;
     }
 };
 
+
 const updateDeploymentStatus = async (channelName: string, deploymentId: string, status: string): Promise<void> => {
     try {
-        const nextResult = await fetch(`http://localhost:3000/api/deployment?deploymentIdWithStatus=${deploymentId}-${status}`, {
+        const nextResult = await fetch(`${process.env.FRONTEND_URL}/api/deployment?deploymentIdWithStatus=${deploymentId}-${status}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                "x-api-key": "skapi_EBYdfafaav0dPC0iPdfaZeW4bTpaRJ66eXen2lB"
+                "x-api-key": `${process.env.CLERK_KEY}`
             },
         });
         const nextData = await nextResult.json();
@@ -143,7 +187,7 @@ export const createJob = async (
     git_url: string,
     project_id: string,
     root_folder: string,
-    env_variables: Array<{ name: string, value: string }>,
+    env_variables: { name: string, value: string }[], 
     branch: string,
     deploymentId: string,
     access_token?: string,
@@ -183,7 +227,7 @@ export const createJob = async (
                                 { name: 'SOURCE_DIRECTORY', value: root_folder },
                                 { name: 'BRANCH', value: branch },
                                 { name: 'ACCESS_TOKEN', value: access_token },
-                                ...env_variables.map(envVar => ({ name: envVar.name, value: envVar.value }))
+                                ...(env_variables ? env_variables.map(envVar => ({ name: envVar.name, value: envVar.value })) : []),
                             ],
                         },
                     ],
@@ -206,7 +250,6 @@ export const createJob = async (
 
         await getPodLogs(podName, project_id);
         await streamContainerLogs('default', podName, containerName, channelName);
-        await updateDeploymentStatus(channelName, deploymentId, "SUCCESS");
 
     } catch (err) {
         logger.error('Error creating Job:', err);

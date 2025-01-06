@@ -19,7 +19,6 @@ app.use(cors(
 
 const PORT = process.env.PORT || 8080;
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/cargodeploy';
 
 const subscriber = new Redis(REDIS_URL);
 
@@ -47,8 +46,6 @@ app.get('/', (req, res) => {
 
 const start = async () => {
     try {
-        await connectDB(MONGODB_URI);
-        console.log('Connected to MongoDB!');
 
         await isSubscriberConnected();
 
