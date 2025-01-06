@@ -14,14 +14,127 @@ const coreApi = kc.makeApiClient(k8s.CoreV1Api);
 const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
 console.log(process.env.IMAGE_NAME);
-const logsToPublish:string[] = [];
+const logsToPublish: string[] = [];
 
 redis.on('connect', () => {
     console.log('Publisher connected to Redis 🚀');
 });
 
+const triggerWebHookForSendingMails = async (status: string) => {
+    try {
+        const res = await fetch(`${process.env.N8N_WEBHOOK_URL}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: status,
+                subject: `Deployment ${status.toUpperCase()}`,
+                body: `<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Deployment Status Update</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f9f9f9;
+                            margin: 0;
+                            padding: 0;
+                            color: #333;
+                        }
+                        .container {
+                            max-width: 600px;
+                            margin: 20px auto;
+                            background-color: #fff;
+                            border: 1px solid #ddd;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        }
+                        .header {
+                            background-color: #333;
+                            color: #fff;
+                            text-align: center;
+                            padding: 20px;
+                        }
+                        .header h1 {
+                            margin: 0;
+                            font-size: 24px;
+                            letter-spacing: 1px;
+                        }
+                        .content {
+                            padding: 20px;
+                        }
+                        .content h2 {
+                            color: #333;
+                            font-size: 20px;
+                            margin-bottom: 10px;
+                        }
+                        .content p {
+                            line-height: 1.6;
+                            margin: 0 0 10px;
+                        }
+                        .highlight {
+                            font-weight: bold;
+                            color: #000;
+                        }
+                        .status {
+                            display: inline-block;
+                            padding: 10px 20px;
+                            font-size: 18px;
+                            border-radius: 4px;
+                            margin: 20px 0;
+                        }
+                        .status.success {
+                            background-color: #4caf50;
+                            color: #fff;
+                        }
+                        .status.failed {
+                            background-color: #f44336;
+                            color: #fff;
+                        }
+                        .footer {
+                            text-align: center;
+                            font-size: 14px;
+                            color: #888;
+                            padding: 10px;
+                            border-top: 1px solid #ddd;
+                            background-color: #f9f9f9;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>Deployment Notification</h1>
+                        </div>
+                        <div class="content">
+                            <h2>Hello,</h2>
+                            <p>We wanted to inform you about the recent status of your deployment:</p>
+                            <div class="status {{status.toLowerCase()}}">
+                                Deployment <span class="highlight">{{status.toUpperCase()}}</span>
+                            </div>
+                            <p>If you have any questions or need assistance, please don't hesitate to reach out to us.</p>
+                            <p>Thank you for choosing our service.</p>
+                        </div>
+                        <div class="footer">
+                            &copy; 2025 Deployment Service. All rights reserved.
+                        </div>
+                    </div>
+                </body>
+                </html>
+                `
+            })
+        })
+    } catch (error) {
+        logger.error('Error triggering webhook:', error);
+    }
+}
+
 const saveLogsToDatabase = async (logs: string[], deploymentId: string) => {
-    try{
+    try {
         const res = await fetch(`${process.env.FRONTEND_URL}/api/logs`, {
             method: 'POST',
             headers: {
@@ -31,13 +144,13 @@ const saveLogsToDatabase = async (logs: string[], deploymentId: string) => {
             body: JSON.stringify({ logs, deploymentId })
         });
         const data = await res.json();
-        if(res.status === 201){
+        if (res.status === 201) {
             console.log(data);
-        }else{
+        } else {
             console.log(data);
             console.log('Error saving logs to database');
         }
-    }catch(error){
+    } catch (error) {
         logger.error('Error saving logs to database:', error);
     }
 }
@@ -83,15 +196,18 @@ const streamContainerLogs = async (namespace: string, podName: string, container
                 logger.error(`Pod ${podName} failed.`);
                 await publishLogs(channelName, `Pod ${podName} failed.`);
                 await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
+                await triggerWebHookForSendingMails("failed");
             } else {
                 logger.info(`Finished streaming logs for container ${containerName}`);
                 await saveLogsToDatabase(logsToPublish, channelName.split(":")[1]);
                 await updateDeploymentStatus(channelName, channelName.split(":")[1], "SUCCESS");
+                await triggerWebHookForSendingMails("success");
             }
         });
     } catch (error) {
         logger.error(`Error streaming logs for container ${containerName}:`, error);
         await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
+        await triggerWebHookForSendingMails("failed");
     }
 };
 
@@ -134,6 +250,7 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
             logger.error(`Pod ${podName} failed.`);
             await publishLogs(channelName, `Pod ${podName} failed.`);
             await updateDeploymentStatus(channelName, channelName.split(":")[1], "FAILED");
+            await triggerWebHookForSendingMails("failed");
             throw new Error(`Pod ${podName} failed.`);
         } else {
             logger.info(`Waiting for pod ${podName} to be ready...`);
@@ -158,6 +275,7 @@ const getPodLogs = async (podName: string, project_id: string): Promise<void> =>
     } catch (error) {
         logger.error('Error fetching pod logs:', error);
         await updateDeploymentStatus(`logs:${project_id}`, project_id, "FAILED");
+        await triggerWebHookForSendingMails("failed");
         throw error;
     }
 };
@@ -187,7 +305,7 @@ export const createJob = async (
     git_url: string,
     project_id: string,
     root_folder: string,
-    env_variables: { name: string, value: string }[], 
+    env_variables: { name: string, value: string }[],
     branch: string,
     deploymentId: string,
     access_token?: string,
@@ -254,6 +372,7 @@ export const createJob = async (
     } catch (err) {
         logger.error('Error creating Job:', err);
         await updateDeploymentStatus(channelName, deploymentId, "FAILED");
+        await triggerWebHookForSendingMails("failed");
         throw err;
     }
 };
