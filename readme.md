@@ -87,8 +87,12 @@ docker run -it -e PROJECT_ID=kaka -e GIT_REPOSITORY__URL=https://github.com/Adit
   "git_url": "https://github.com/Slacky300/IOE.git",
   "project_id": "ioenoob",
   "root_folder": "dashboard",
-   "env_variables": [
-        { "name": "VITE_API_URL", "value": "http://139.59.62.183:8060" }
-        ]
+  "env_variables": [
+    { "name": "VITE_API_URL", "value": "http://139.59.62.183:8060" }
+  ],
+  "branch": "main",
+  "deployment_id": "deployment_12345",
+  "access_token": "your_access_token_here"
 }
+
 ```
