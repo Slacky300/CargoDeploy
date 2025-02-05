@@ -9,22 +9,20 @@ jobs:
 
     runs-on: self-hosted  
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+    - name: Check Node.js Version
+      run: node -v 
 
     - name: Install Dependencies
-      run: npm ci
+      run: |
+        if [ -f package-lock.json ]; then
+          npm ci
+        else
+          npm install
+        fi
       working-directory: k8-comm 
 
     - name: Build TypeScript Files
