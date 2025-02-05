@@ -24,11 +24,11 @@ jobs:
         fi
  
     - name: Install Dependencies
-      run: npm ci
+      run: sudo npm ci
       working-directory: /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm 
 
     - name: Build TypeScript Files
-      run: npm run build
+      run: sudo npm run build
       working-directory: /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm 
 
     - name: Restart Application with PM2
