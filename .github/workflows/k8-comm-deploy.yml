@@ -22,10 +22,7 @@ jobs:
           sudo mkdir -p /var/www/cargodeployapi.slacky.xyz
           sudo chown -R $USER:$USER /var/www/cargodeployapi.slacky.xyz
         fi
-
-    - name: Sync Repository to Deployment Directory
-      run: rsync -av --delete ./ /var/www/cargodeployapi.slacky.xyz/CargoDeploy
-    
+ 
     - name: Install Dependencies
       run: npm ci
       working-directory: /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm 
