@@ -41,7 +41,7 @@ const isSubscriberConnected = async () => {
 };
 
 app.get('/', (req, res) => {
-    res.json({ message: 'Cargo Deploy Job Server 🚚' });
+    res.json({ message: 'Cargo Deploy Job Server 🚚 CICD' });
 });
 
 const start = async () => {
