@@ -23,8 +23,9 @@ jobs:
           sudo chown -R $USER:$USER /var/www/cargodeployapi.slacky.xyz
         fi
 
-    - name: Sync Repository to Deployment Directory
-      run: sudo rsync -av --delete --exclude=node_modules ./ /var/www/cargodeployapi.slacky.xyz/
+    - name: Sync k8-comm to Deployment Directory
+      run: sudo rsync -av --delete --exclude=node_modules ./k8-comm/ /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm/
+
 
     - name: Print Working Directory Before Build
       run: pwd
