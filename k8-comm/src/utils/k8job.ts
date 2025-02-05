@@ -268,25 +268,25 @@ const waitForPodReady = async (podName: string, namespace = 'default', channelNa
 };
 
 
-const getPodLogs = async (podName: string, project_id: string, email: string): Promise<void> => {
+const getPodLogs = async (podName: string, channelName: string, email: string): Promise<void> => {
     try {
         if (!podName) {
             logger.error('Pod name is undefined');
             return;
         }
 
-        await waitForPodReady(podName, 'default', project_id, email);
+        await waitForPodReady(podName, 'default', channelName , email);
 
         const logs = await coreApi.readNamespacedPodLog(podName, 'default');
         logger.info(`Logs from pod ${podName}:\n${logs.body}`);
     } catch (error) {
         logger.error('Error fetching pod logs:', error);
         if (error instanceof Error) {
-            publishLogs(`logs:${project_id}`, `Error fetching pod logs: ${error.message}`);
+            publishLogs(`${channelName}`, `Error fetching pod logs: ${error.message}`);
         } else {
-            publishLogs(`logs:${project_id}`, `Error fetching pod logs: ${String(error)}`);
+            publishLogs(`${channelName}`, `Error fetching pod logs: ${String(error)}`);
         }
-        await updateDeploymentStatus(`logs:${project_id}`, project_id, "FAILED", email);
+        await updateDeploymentStatus(`${channelName}`, channelName.split(":")[1], "FAILED", email);
         throw error;
     }
 };
@@ -306,7 +306,7 @@ const updateDeploymentStatus = async (channelName: string, deploymentId: string,
             console.log(nextData);
             publishLogs(channelName, `${status}`);
             await saveLogsToDatabase(logsToPublish, deploymentId);
-            await triggerWebHookForSendingMails(email, status);
+            // await triggerWebHookForSendingMails(email, status);
         }
     } catch (error) {
         logger.error('Error updating deployment status:', error);
@@ -344,6 +344,7 @@ export const createJob = async (
             name: jobName,
         },
         spec: {
+            ttlSecondsAfterFinished: 10,
             template: {
                 metadata: {
                     labels: {
@@ -382,7 +383,7 @@ export const createJob = async (
             throw new Error('Pod name is undefined');
         }
 
-        await getPodLogs(podName, project_id,email);
+        await getPodLogs(podName, channelName,email);
         await streamContainerLogs('default', podName, containerName, channelName, email);
 
     } catch (err) {
