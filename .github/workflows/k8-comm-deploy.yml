@@ -22,18 +22,30 @@ jobs:
           sudo mkdir -p /var/www/cargodeployapi.slacky.xyz
           sudo chown -R $USER:$USER /var/www/cargodeployapi.slacky.xyz
         fi
- 
+
+    - name: Sync Repository to Deployment Directory
+      run: sudo rsync -av --delete --exclude=node_modules ./ /var/www/cargodeployapi.slacky.xyz/
+
+    - name: Print Working Directory Before Build
+      run: pwd
+      working-directory: /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm
+
     - name: Install Dependencies
       run: sudo npm ci
       working-directory: /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm 
 
     - name: Build TypeScript Files
-      run: sudo npm run build
+      run: |
+        echo "Building in:"
+        pwd
+        sudo npm run build
       working-directory: /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm 
 
     - name: Restart Application with PM2
       run: |
         cd /var/www/cargodeployapi.slacky.xyz/CargoDeploy/k8-comm
+        echo "Restarting PM2 from:"
+        pwd
         sudo pm2 describe cargoapi > /dev/null
         if [ $? -ne 0 ]; then
           sudo pm2 start dist/server.js --name "cargoapi"
