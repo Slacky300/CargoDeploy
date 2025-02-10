@@ -3,7 +3,8 @@
 export GIT_REPOSITORY_URL="$GIT_REPOSITORY_URL"
 export SOURCE_DIRECTORY="$SOURCE_DIRECTORY"
 export ACCESS_TOKEN="$ACCESS_TOKEN"
-export BRANCH="${BRANCH:-master}" 
+export BRANCH="${BRANCH:-master}"
+export COMMIT_SHA="${COMMIT_SHA:-latest}"
 
 # Validate required environment variables
 if [ -z "$GIT_REPOSITORY_URL" ] || [ -z "$SOURCE_DIRECTORY" ]; then
@@ -32,10 +33,24 @@ fi
 
 # Clone the repository
 echo "🚀 Initiating repository clone: Branch '$BRANCH', URL: $GIT_REPOSITORY_URL"
-git clone --branch "$BRANCH" "$AUTHENTICATED_URL" /home/app/repo || {
+git clone --branch "$BRANCH" --depth 1 "$AUTHENTICATED_URL" /home/app/repo || {
   echo "❌ Repository clone failed. Verify the branch name and repository URL."
   exit 1
 }
+
+# Checkout the specific commit if provided
+if [ "$COMMIT_SHA" != "latest" ]; then
+  echo "📌 Checking out commit: $COMMIT_SHA"
+  cd /home/app/repo || exit 1
+  git fetch --depth=1 origin "$COMMIT_SHA" || {
+    echo "❌ Commit fetch failed. Ensure the commit exists in the repository."
+    exit 1
+  }
+  git checkout "$COMMIT_SHA" || {
+    echo "❌ Commit checkout failed. Ensure the commit SHA is valid."
+    exit 1
+  }
+fi
 
 # Verify and copy source directory
 if [ -d "/home/app/repo/$SOURCE_DIRECTORY" ]; then
