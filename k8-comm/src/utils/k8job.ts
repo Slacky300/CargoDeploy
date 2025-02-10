@@ -324,8 +324,12 @@ export const createJob = async (
     branch: string,
     deploymentId: string,
     email: string,
+    build_command: string,
+    install_command: string,
+    commit_sha: string,
     access_token?: string,
     name?: string,
+
 ): Promise<void> => {
     const uniqueId = uuidv4();
     const jobName = `s3-upload-job-${uniqueId}`;
@@ -344,7 +348,7 @@ export const createJob = async (
             name: jobName,
         },
         spec: {
-            ttlSecondsAfterFinished: 10,
+            ttlSecondsAfterFinished: 30,
             template: {
                 metadata: {
                     labels: {
@@ -362,14 +366,20 @@ export const createJob = async (
                                 { name: 'SOURCE_DIRECTORY', value: root_folder },
                                 { name: 'BRANCH', value: branch },
                                 { name: 'ACCESS_TOKEN', value: access_token },
-                                ...(env_variables ? env_variables.map(envVar => ({ name: envVar.name, value: envVar.value })) : []),
+                                { name: 'DEPLOYMENT_ID', value: deploymentId },
+                                { name: 'BUILD_COMMAND', value: build_command },
+                                { name: 'INSTALL_COMMAND', value: install_command },
+                                { name: 'COMMIT_SHA', value: commit_sha },
+                                ...(env_variables ? env_variables.map(envVar => ({ name: envVar.name, value: envVar.value })) : [
+                                    { name: 'NAME', value: name },
+                                ]),
                             ],
                         },
                     ],
                     restartPolicy: 'Never',
                 },
             },
-            backoffLimit: 4,
+            backoffLimit: 2,
         },
     };
 
