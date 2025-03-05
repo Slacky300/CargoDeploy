@@ -245,3 +245,214 @@
 {"level":"info","message":"✅ Successfully uploaded: vite.svg\n✅ All files successfully uploaded to the cloud.\n","timestamp":"2025-01-30T07:13:01.490Z"}
 {"level":"info","message":"🎉 Deployment process completed!\n","timestamp":"2025-01-30T07:13:01.493Z"}
 {"level":"info","message":"Finished streaming logs for s3-upload-container-18e95070-8895-410e-957d-4c97c53a732f","timestamp":"2025-01-30T07:13:02.380Z"}
+{"level":"info","message":"Job s3-upload-job-f3a056c8-0719-4ce6-a78c-4b96081e91db created successfully","timestamp":"2025-02-09T13:23:55.564Z"}
+{"level":"info","message":"Waiting for pod s3-upload-job-f3a056c8-0719-4ce6-a78c-4b96081e91db-zvh7s to be ready...","timestamp":"2025-02-09T13:23:55.615Z"}
+{"level":"info","message":"Logs from pod s3-upload-job-f3a056c8-0719-4ce6-a78c-4b96081e91db-zvh7s:\n🔑 Access token detected. Using secure access for cloning.\n🚀 Initiating repository clone: Branch 'dev', URL: https://github.com/Slacky300/REAL_TIME_EDIFY.git\nCloning into '/home/app/repo'...\n📂 Preparing source directory: src/client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-09T13:24:00.696Z"}
+{"level":"info","message":"📂 Preparing source directory: src/client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-09T13:24:00.716Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-09T13:24:05.190Z"}
+{"level":"info","message":"added 293 packages, and audited 294 packages in 5s\n","timestamp":"2025-02-09T13:24:05.193Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:05.194Z"}
+{"level":"info","message":"100 packages are looking for funding\n","timestamp":"2025-02-09T13:24:05.197Z"}
+{"level":"info","message":"  run `npm fund` for details\n","timestamp":"2025-02-09T13:24:05.198Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:05.203Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-09T13:24:05.225Z"}
+{"level":"info","message":"5 vulnerabilities (3 moderate, 2 high)\n","timestamp":"2025-02-09T13:24:05.228Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:05.228Z"}
+{"level":"info","message":"To address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nRun `npm audit` for details.\n\n","timestamp":"2025-02-09T13:24:05.232Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-09T13:24:05.387Z"}
+{"level":"info","message":"> client@0.0.0 build\n","timestamp":"2025-02-09T13:24:05.390Z"}
+{"level":"info","message":"> vite build\n","timestamp":"2025-02-09T13:24:05.395Z"}
+{"level":"info","message":"\n\n","timestamp":"2025-02-09T13:24:05.398Z"}
+{"level":"info","message":"ℹ️ Build log: vite v5.4.2 building for production...\n","timestamp":"2025-02-09T13:24:05.626Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:05.627Z"}
+{"level":"info","message":"ℹ️ Build log: transforming...\n","timestamp":"2025-02-09T13:24:05.682Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:05.683Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ 85 modules transformed.\n\n","timestamp":"2025-02-09T13:24:08.306Z"}
+{"level":"info","message":"ℹ️ Build log: rendering chunks...\n","timestamp":"2025-02-09T13:24:08.606Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:08.607Z"}
+{"level":"info","message":"ℹ️ Build log: computing gzip size...\n\n","timestamp":"2025-02-09T13:24:08.617Z"}
+{"level":"info","message":"ℹ️ Build log: dist/index.html                   1.02 kB │ gzip:   0.57 kB\n\nℹ️ Build log: dist/assets/index-CFV8pses.css   36.32 kB │ gzip:   6.05 kB\ndist/assets/index-DepbvAgm.js   458.43 kB │ gzip: 133.54 kB\n\n","timestamp":"2025-02-09T13:24:08.639Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ built in 2.98s\n","timestamp":"2025-02-09T13:24:08.643Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-09T13:24:08.644Z"}
+{"level":"info","message":"✅ Build process completed successfully.\n","timestamp":"2025-02-09T13:24:08.685Z"}
+{"level":"info","message":"📂 Found build folder: /home/app/output/dist\n","timestamp":"2025-02-09T13:24:08.689Z"}
+{"level":"info","message":"🔄 Uploading files to the cloud. This may take a moment...\n","timestamp":"2025-02-09T13:24:08.689Z"}
+{"level":"info","message":"📂 Processing directory: assets\n","timestamp":"2025-02-09T13:24:08.690Z"}
+{"level":"info","message":"📄 Uploading file: index-CFV8pses.css\n","timestamp":"2025-02-09T13:24:08.690Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-CFV8pses.css\n","timestamp":"2025-02-09T13:24:08.861Z"}
+{"level":"info","message":"📄 Uploading file: index-DepbvAgm.js\n","timestamp":"2025-02-09T13:24:08.864Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-DepbvAgm.js\n","timestamp":"2025-02-09T13:24:08.953Z"}
+{"level":"info","message":"📄 Uploading file: index.html\n","timestamp":"2025-02-09T13:24:08.955Z"}
+{"level":"info","message":"✅ Successfully uploaded: index.html\n📄 Uploading file: vite.svg\n","timestamp":"2025-02-09T13:24:08.986Z"}
+{"level":"info","message":"✅ Successfully uploaded: vite.svg\n✅ All files successfully uploaded to the cloud.\n🎉 Deployment process completed!\n","timestamp":"2025-02-09T13:24:09.018Z"}
+{"level":"info","message":"Finished streaming logs for s3-upload-container-f3a056c8-0719-4ce6-a78c-4b96081e91db","timestamp":"2025-02-09T13:24:10.030Z"}
+{"level":"error","message":"Error updating deployment status: Unexpected token < in JSON at position 0","stack":"SyntaxError: Unexpected token < in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5591:19)\n    at successSteps (node:internal/deps/undici/undici:5562:27)\n    at fullyReadBody (node:internal/deps/undici/undici:1665:9)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async specConsumeBody (node:internal/deps/undici/undici:5571:7)\n    at async updateDeploymentStatus (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:290:26)\n    at async Request.<anonymous> (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:199:17)","timestamp":"2025-02-09T13:24:49.028Z"}
+{"level":"info","message":"Job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4 created successfully","timestamp":"2025-02-09T13:41:53.335Z"}
+{"level":"info","message":"No pods found for the job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4. Retrying (1/5)...","timestamp":"2025-02-09T13:58:00.082Z"}
+{"level":"info","message":"No pods found for the job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4. Retrying (2/5)...","timestamp":"2025-02-09T13:58:05.091Z"}
+{"level":"info","message":"No pods found for the job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4. Retrying (3/5)...","timestamp":"2025-02-09T13:58:10.098Z"}
+{"level":"info","message":"No pods found for the job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4. Retrying (4/5)...","timestamp":"2025-02-09T13:58:15.108Z"}
+{"level":"info","message":"No pods found for the job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4. Retrying (5/5)...","timestamp":"2025-02-09T13:58:20.118Z"}
+{"level":"error","message":"No pods found for the job s3-upload-job-8b76b061-8225-42f6-919a-443526683de4 after 5 retries.","timestamp":"2025-02-09T13:58:25.120Z"}
+{"level":"error","message":"Error creating Job: Pod name is undefined","stack":"Error: Pod name is undefined\n    at createJob (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:352:19)","timestamp":"2025-02-09T13:58:25.121Z"}
+{"level":"error","message":"Error updating deployment status: Unexpected token < in JSON at position 0","stack":"SyntaxError: Unexpected token < in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5591:19)\n    at successSteps (node:internal/deps/undici/undici:5562:27)\n    at fullyReadBody (node:internal/deps/undici/undici:1665:9)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async specConsumeBody (node:internal/deps/undici/undici:5571:7)\n    at async updateDeploymentStatus (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:290:26)\n    at async createJob (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:365:9)","timestamp":"2025-02-09T13:59:04.328Z"}
+{"level":"info","message":"Job s3-upload-job-9e7f8e01-960a-4cdf-b37f-0a145743dd7c created successfully","timestamp":"2025-02-21T04:27:53.925Z"}
+{"level":"info","message":"Waiting for pod s3-upload-job-9e7f8e01-960a-4cdf-b37f-0a145743dd7c-cfrq5 to be ready...","timestamp":"2025-02-21T04:27:53.988Z"}
+{"level":"info","message":"Logs from pod s3-upload-job-9e7f8e01-960a-4cdf-b37f-0a145743dd7c-cfrq5:\n🔑 Access token detected. Using secure access for cloning.\n🚀 Initiating repository clone: Branch 'submission', URL: https://github.com/Slacky300/DASH.git\nCloning into '/home/app/repo'...\n📂 Preparing source directory: client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-21T04:27:59.049Z"}
+{"level":"info","message":"📂 Preparing source directory: client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\n","timestamp":"2025-02-21T04:27:59.068Z"}
+{"level":"info","message":"npm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-21T04:27:59.070Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:28:03.841Z"}
+{"level":"info","message":"added 275 packages, and audited 276 packages in 5s\n","timestamp":"2025-02-21T04:28:03.842Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:03.843Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:28:03.843Z"}
+{"level":"info","message":"97 packages are looking for funding\n","timestamp":"2025-02-21T04:28:03.844Z"}
+{"level":"info","message":"  run `npm fund` for details\n","timestamp":"2025-02-21T04:28:03.845Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:03.845Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:28:03.879Z"}
+{"level":"info","message":"5 vulnerabilities (2 moderate, 3 high)\n","timestamp":"2025-02-21T04:28:03.880Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:03.882Z"}
+{"level":"info","message":"To address all issues, run:\n","timestamp":"2025-02-21T04:28:03.883Z"}
+{"level":"info","message":"  npm audit fix\n","timestamp":"2025-02-21T04:28:03.884Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:03.885Z"}
+{"level":"info","message":"Run `npm audit` for details.\n","timestamp":"2025-02-21T04:28:03.886Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:03.886Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:28:04.044Z"}
+{"level":"info","message":"> client@0.0.0 build\n","timestamp":"2025-02-21T04:28:04.046Z"}
+{"level":"info","message":"> vite build\n","timestamp":"2025-02-21T04:28:04.047Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:04.049Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:04.049Z"}
+{"level":"info","message":"ℹ️ Build log: vite v5.0.10 building for production...\n\n","timestamp":"2025-02-21T04:28:04.341Z"}
+{"level":"info","message":"ℹ️ Build log: transforming...\n","timestamp":"2025-02-21T04:28:04.374Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:04.375Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ 64 modules transformed.\n","timestamp":"2025-02-21T04:28:05.960Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:05.960Z"}
+{"level":"info","message":"ℹ️ Build log: rendering chunks...\n\n","timestamp":"2025-02-21T04:28:06.161Z"}
+{"level":"info","message":"ℹ️ Build log: computing gzip size...\n","timestamp":"2025-02-21T04:28:06.169Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:06.170Z"}
+{"level":"info","message":"ℹ️ Build log: dist/index.html                     1.01 kB │ gzip:  0.55 kB\n\nℹ️ Build log: dist/assets/necleo-FFJna3bh.svg     6.10 kB │ gzip:  2.35 kB\n","timestamp":"2025-02-21T04:28:06.184Z"}
+{"level":"info","message":"dist/assets/profile-okOqvZpo.png  399.88 kB\n","timestamp":"2025-02-21T04:28:06.186Z"}
+{"level":"info","message":"dist/assets/index-GiwVDA_P.css     11.75 kB │ gzip:  2.40 kB\n","timestamp":"2025-02-21T04:28:06.188Z"}
+{"level":"info","message":"dist/assets/index-F0JL0ZNz.js     222.60 kB │ gzip: 70.98 kB\n","timestamp":"2025-02-21T04:28:06.188Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:06.190Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ built in 1.84s\n","timestamp":"2025-02-21T04:28:06.193Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:28:06.196Z"}
+{"level":"info","message":"✅ Build process completed successfully.\n","timestamp":"2025-02-21T04:28:06.235Z"}
+{"level":"info","message":"📂 Found build folder: /home/app/output/dist\n","timestamp":"2025-02-21T04:28:06.237Z"}
+{"level":"info","message":"🔄 Uploading files to the cloud. This may take a moment...\n","timestamp":"2025-02-21T04:28:06.237Z"}
+{"level":"info","message":"📂 Processing directory: assets\n","timestamp":"2025-02-21T04:28:06.238Z"}
+{"level":"info","message":"📄 Uploading file: index-F0JL0ZNz.js\n","timestamp":"2025-02-21T04:28:06.239Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-F0JL0ZNz.js\n📄 Uploading file: index-GiwVDA_P.css\n","timestamp":"2025-02-21T04:28:06.484Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-GiwVDA_P.css\n","timestamp":"2025-02-21T04:28:06.520Z"}
+{"level":"info","message":"📄 Uploading file: necleo-FFJna3bh.svg\n","timestamp":"2025-02-21T04:28:06.522Z"}
+{"level":"info","message":"✅ Successfully uploaded: necleo-FFJna3bh.svg\n","timestamp":"2025-02-21T04:28:06.567Z"}
+{"level":"info","message":"📄 Uploading file: profile-okOqvZpo.png\n","timestamp":"2025-02-21T04:28:06.568Z"}
+{"level":"info","message":"✅ Successfully uploaded: profile-okOqvZpo.png\n","timestamp":"2025-02-21T04:28:06.677Z"}
+{"level":"info","message":"📄 Uploading file: index.html\n","timestamp":"2025-02-21T04:28:06.680Z"}
+{"level":"info","message":"✅ Successfully uploaded: index.html\n","timestamp":"2025-02-21T04:28:06.722Z"}
+{"level":"info","message":"📄 Uploading file: necleo.svg\n","timestamp":"2025-02-21T04:28:06.723Z"}
+{"level":"info","message":"✅ Successfully uploaded: necleo.svg\n📄 Uploading file: vite.svg\n","timestamp":"2025-02-21T04:28:06.773Z"}
+{"level":"info","message":"✅ Successfully uploaded: vite.svg\n","timestamp":"2025-02-21T04:28:06.804Z"}
+{"level":"info","message":"✅ All files successfully uploaded to the cloud.\n","timestamp":"2025-02-21T04:28:06.805Z"}
+{"level":"info","message":"🎉 Deployment process completed!\n","timestamp":"2025-02-21T04:28:06.806Z"}
+{"level":"info","message":"Finished streaming logs for s3-upload-container-9e7f8e01-960a-4cdf-b37f-0a145743dd7c","timestamp":"2025-02-21T04:28:07.819Z"}
+{"level":"error","message":"Error updating deployment status: Unexpected token < in JSON at position 0","stack":"SyntaxError: Unexpected token < in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5591:19)\n    at successSteps (node:internal/deps/undici/undici:5562:27)\n    at fullyReadBody (node:internal/deps/undici/undici:1665:9)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async specConsumeBody (node:internal/deps/undici/undici:5571:7)\n    at async updateDeploymentStatus (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:290:26)\n    at async Request.<anonymous> (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:199:17)","timestamp":"2025-02-21T04:28:46.991Z"}
+{"level":"info","message":"Job s3-upload-job-c0f4e36b-2e90-4817-9e53-ebc49c68b23f created successfully","timestamp":"2025-02-21T04:29:17.449Z"}
+{"level":"info","message":"Waiting for pod s3-upload-job-c0f4e36b-2e90-4817-9e53-ebc49c68b23f-j28gr to be ready...","timestamp":"2025-02-21T04:29:17.509Z"}
+{"level":"info","message":"Logs from pod s3-upload-job-c0f4e36b-2e90-4817-9e53-ebc49c68b23f-j28gr:\n🔑 Access token detected. Using secure access for cloning.\n🚀 Initiating repository clone: Branch 'submission', URL: https://github.com/Slacky300/DASH.git\nCloning into '/home/app/repo'...\n📂 Preparing source directory: client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-21T04:29:22.571Z"}
+{"level":"info","message":"📂 Preparing source directory: client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n","timestamp":"2025-02-21T04:29:22.591Z"}
+{"level":"info","message":"⚙️ Running the main script (script.js)...\n","timestamp":"2025-02-21T04:29:22.593Z"}
+{"level":"info","message":"🚀 Starting deployment process...\n","timestamp":"2025-02-21T04:29:22.593Z"}
+{"level":"info","message":"🔄 Running build process. Please wait...\n","timestamp":"2025-02-21T04:29:22.594Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:29:27.000Z"}
+{"level":"info","message":"added 275 packages, and audited 276 packages in 5s\n\n","timestamp":"2025-02-21T04:29:27.004Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:29:27.005Z"}
+{"level":"info","message":"97 packages are looking for funding\n","timestamp":"2025-02-21T04:29:27.008Z"}
+{"level":"info","message":"  run `npm fund` for details\n\n","timestamp":"2025-02-21T04:29:27.010Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:29:27.040Z"}
+{"level":"info","message":"5 vulnerabilities (2 moderate, 3 high)\n","timestamp":"2025-02-21T04:29:27.041Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:27.042Z"}
+{"level":"info","message":"To address all issues, run:\n","timestamp":"2025-02-21T04:29:27.043Z"}
+{"level":"info","message":"  npm audit fix\n","timestamp":"2025-02-21T04:29:27.044Z"}
+{"level":"info","message":"\nRun `npm audit` for details.\n\n","timestamp":"2025-02-21T04:29:27.045Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:29:27.200Z"}
+{"level":"info","message":"> client@0.0.0 build\n> vite build\n\n\n","timestamp":"2025-02-21T04:29:27.201Z"}
+{"level":"info","message":"ℹ️ Build log: vite v5.0.10 building for production...\n","timestamp":"2025-02-21T04:29:27.474Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:27.476Z"}
+{"level":"info","message":"ℹ️ Build log: transforming...\n","timestamp":"2025-02-21T04:29:27.504Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:27.505Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ 64 modules transformed.\n","timestamp":"2025-02-21T04:29:29.082Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:29.085Z"}
+{"level":"info","message":"ℹ️ Build log: rendering chunks...\n\n","timestamp":"2025-02-21T04:29:29.333Z"}
+{"level":"info","message":"ℹ️ Build log: computing gzip size...\n","timestamp":"2025-02-21T04:29:29.341Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:29.342Z"}
+{"level":"info","message":"ℹ️ Build log: dist/index.html                     1.01 kB │ gzip:  0.55 kB\n","timestamp":"2025-02-21T04:29:29.356Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:29.358Z"}
+{"level":"info","message":"ℹ️ Build log: dist/assets/necleo-FFJna3bh.svg     6.10 kB │ gzip:  2.35 kB\n","timestamp":"2025-02-21T04:29:29.360Z"}
+{"level":"info","message":"dist/assets/profile-okOqvZpo.png  399.88 kB\n","timestamp":"2025-02-21T04:29:29.362Z"}
+{"level":"info","message":"dist/assets/index-GiwVDA_P.css     11.75 kB │ gzip:  2.40 kB\n","timestamp":"2025-02-21T04:29:29.363Z"}
+{"level":"info","message":"dist/assets/index-F0JL0ZNz.js     222.60 kB │ gzip: 70.98 kB\n✓ built in 1.88s\n","timestamp":"2025-02-21T04:29:29.365Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:29:29.365Z"}
+{"level":"info","message":"✅ Build process completed successfully.\n","timestamp":"2025-02-21T04:29:29.406Z"}
+{"level":"info","message":"📂 Found build folder: /home/app/output/dist\n🔄 Uploading files to the cloud. This may take a moment...\n📂 Processing directory: assets\n📄 Uploading file: index-F0JL0ZNz.js\n","timestamp":"2025-02-21T04:29:29.408Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-F0JL0ZNz.js\n","timestamp":"2025-02-21T04:29:29.650Z"}
+{"level":"info","message":"📄 Uploading file: index-GiwVDA_P.css\n","timestamp":"2025-02-21T04:29:29.653Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-GiwVDA_P.css\n","timestamp":"2025-02-21T04:29:29.704Z"}
+{"level":"info","message":"📄 Uploading file: necleo-FFJna3bh.svg\n","timestamp":"2025-02-21T04:29:29.705Z"}
+{"level":"info","message":"✅ Successfully uploaded: necleo-FFJna3bh.svg\n📄 Uploading file: profile-okOqvZpo.png\n","timestamp":"2025-02-21T04:29:29.741Z"}
+{"level":"info","message":"✅ Successfully uploaded: profile-okOqvZpo.png\n","timestamp":"2025-02-21T04:29:29.880Z"}
+{"level":"info","message":"📄 Uploading file: index.html\n","timestamp":"2025-02-21T04:29:29.883Z"}
+{"level":"info","message":"✅ Successfully uploaded: index.html\n📄 Uploading file: necleo.svg\n","timestamp":"2025-02-21T04:29:29.915Z"}
+{"level":"info","message":"✅ Successfully uploaded: necleo.svg\n📄 Uploading file: vite.svg\n","timestamp":"2025-02-21T04:29:29.946Z"}
+{"level":"info","message":"✅ Successfully uploaded: vite.svg\n✅ All files successfully uploaded to the cloud.\n🎉 Deployment process completed!\n","timestamp":"2025-02-21T04:29:30.024Z"}
+{"level":"info","message":"Finished streaming logs for s3-upload-container-c0f4e36b-2e90-4817-9e53-ebc49c68b23f","timestamp":"2025-02-21T04:29:31.038Z"}
+{"level":"error","message":"Error updating deployment status: Unexpected token < in JSON at position 0","stack":"SyntaxError: Unexpected token < in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5591:19)\n    at successSteps (node:internal/deps/undici/undici:5562:27)\n    at fullyReadBody (node:internal/deps/undici/undici:1665:9)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async specConsumeBody (node:internal/deps/undici/undici:5571:7)\n    at async updateDeploymentStatus (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:290:26)\n    at async Request.<anonymous> (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:199:17)","timestamp":"2025-02-21T04:30:09.856Z"}
+{"level":"info","message":"Job s3-upload-job-6f63ee17-d9f6-4cc0-9f0f-5b192c3c93f3 created successfully","timestamp":"2025-02-21T04:35:15.096Z"}
+{"level":"info","message":"Waiting for pod s3-upload-job-6f63ee17-d9f6-4cc0-9f0f-5b192c3c93f3-7n87b to be ready...","timestamp":"2025-02-21T04:35:15.157Z"}
+{"level":"info","message":"Logs from pod s3-upload-job-6f63ee17-d9f6-4cc0-9f0f-5b192c3c93f3-7n87b:\n🔑 Access token detected. Using secure access for cloning.\n🚀 Initiating repository clone: Branch 'submission', URL: https://github.com/Slacky300/DASH.git\nCloning into '/home/app/repo'...\n📂 Preparing source directory: client\n🛠️ Compiling TypeScript files...\nnpm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-21T04:35:20.220Z"}
+{"level":"info","message":"📂 Preparing source directory: client\n🛠️ Compiling TypeScript files...\n","timestamp":"2025-02-21T04:35:20.244Z"}
+{"level":"info","message":"npm notice\nnpm notice New major version of npm available! 10.8.2 -> 11.1.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v11.1.0\nnpm notice To update run: npm install -g npm@11.1.0\nnpm notice\n⚙️ Running the main script (script.js)...\n🚀 Starting deployment process...\n🔄 Running build process. Please wait...\n","timestamp":"2025-02-21T04:35:20.247Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:35:24.197Z"}
+{"level":"info","message":"added 275 packages, and audited 276 packages in 5s\n","timestamp":"2025-02-21T04:35:24.201Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.202Z"}
+{"level":"info","message":"97 packages are looking for funding\n","timestamp":"2025-02-21T04:35:24.202Z"}
+{"level":"info","message":"  run `npm fund` for details\n","timestamp":"2025-02-21T04:35:24.209Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.212Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:35:24.233Z"}
+{"level":"info","message":"5 vulnerabilities (2 moderate, 3 high)\n","timestamp":"2025-02-21T04:35:24.235Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.238Z"}
+{"level":"info","message":"To address all issues, run:\n","timestamp":"2025-02-21T04:35:24.239Z"}
+{"level":"info","message":"  npm audit fix\n","timestamp":"2025-02-21T04:35:24.239Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.239Z"}
+{"level":"info","message":"Run `npm audit` for details.\n","timestamp":"2025-02-21T04:35:24.242Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.246Z"}
+{"level":"info","message":"ℹ️ Build log: \n","timestamp":"2025-02-21T04:35:24.421Z"}
+{"level":"info","message":"> client@0.0.0 build\n","timestamp":"2025-02-21T04:35:24.421Z"}
+{"level":"info","message":"> vite build\n\n\n","timestamp":"2025-02-21T04:35:24.422Z"}
+{"level":"info","message":"ℹ️ Build log: vite v5.0.10 building for production...\n","timestamp":"2025-02-21T04:35:24.665Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.666Z"}
+{"level":"info","message":"ℹ️ Build log: transforming...\n","timestamp":"2025-02-21T04:35:24.699Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:24.699Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ 64 modules transformed.\n","timestamp":"2025-02-21T04:35:26.242Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:26.243Z"}
+{"level":"info","message":"ℹ️ Build log: rendering chunks...\n\n","timestamp":"2025-02-21T04:35:26.446Z"}
+{"level":"info","message":"ℹ️ Build log: computing gzip size...\n\n","timestamp":"2025-02-21T04:35:26.460Z"}
+{"level":"info","message":"ℹ️ Build log: dist/index.html                     1.01 kB │ gzip:  0.55 kB\n\nℹ️ Build log: dist/assets/necleo-FFJna3bh.svg     6.10 kB │ gzip:  2.35 kB\ndist/assets/profile-okOqvZpo.png  399.88 kB\ndist/assets/index-GiwVDA_P.css     11.75 kB │ gzip:  2.40 kB\ndist/assets/index-F0JL0ZNz.js     222.60 kB │ gzip: 70.98 kB\n\n","timestamp":"2025-02-21T04:35:26.472Z"}
+{"level":"info","message":"ℹ️ Build log: ✓ built in 1.81s\n","timestamp":"2025-02-21T04:35:26.477Z"}
+{"level":"info","message":"\n","timestamp":"2025-02-21T04:35:26.477Z"}
+{"level":"info","message":"✅ Build process completed successfully.\n","timestamp":"2025-02-21T04:35:26.518Z"}
+{"level":"info","message":"📂 Found build folder: /home/app/output/dist\n🔄 Uploading files to the cloud. This may take a moment...\n","timestamp":"2025-02-21T04:35:26.522Z"}
+{"level":"info","message":"📂 Processing directory: assets\n","timestamp":"2025-02-21T04:35:26.525Z"}
+{"level":"info","message":"📄 Uploading file: index-F0JL0ZNz.js\n","timestamp":"2025-02-21T04:35:26.526Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-F0JL0ZNz.js\n","timestamp":"2025-02-21T04:35:26.810Z"}
+{"level":"info","message":"📄 Uploading file: index-GiwVDA_P.css\n","timestamp":"2025-02-21T04:35:26.812Z"}
+{"level":"info","message":"✅ Successfully uploaded: index-GiwVDA_P.css\n📄 Uploading file: necleo-FFJna3bh.svg\n","timestamp":"2025-02-21T04:35:26.913Z"}
+{"level":"info","message":"✅ Successfully uploaded: necleo-FFJna3bh.svg\n📄 Uploading file: profile-okOqvZpo.png\n","timestamp":"2025-02-21T04:35:26.948Z"}
+{"level":"info","message":"✅ Successfully uploaded: profile-okOqvZpo.png\n📄 Uploading file: index.html\n","timestamp":"2025-02-21T04:35:27.066Z"}
+{"level":"info","message":"✅ Successfully uploaded: index.html\n📄 Uploading file: necleo.svg\n","timestamp":"2025-02-21T04:35:27.097Z"}
+{"level":"info","message":"✅ Successfully uploaded: necleo.svg\n","timestamp":"2025-02-21T04:35:27.128Z"}
+{"level":"info","message":"📄 Uploading file: vite.svg\n","timestamp":"2025-02-21T04:35:27.130Z"}
+{"level":"info","message":"✅ Successfully uploaded: vite.svg\n","timestamp":"2025-02-21T04:35:27.164Z"}
+{"level":"info","message":"✅ All files successfully uploaded to the cloud.\n","timestamp":"2025-02-21T04:35:27.165Z"}
+{"level":"info","message":"🎉 Deployment process completed!\n","timestamp":"2025-02-21T04:35:27.167Z"}
+{"level":"info","message":"Finished streaming logs for s3-upload-container-6f63ee17-d9f6-4cc0-9f0f-5b192c3c93f3","timestamp":"2025-02-21T04:35:28.185Z"}
+{"level":"error","message":"Error updating deployment status: Unexpected token < in JSON at position 0","stack":"SyntaxError: Unexpected token < in JSON at position 0\n    at JSON.parse (<anonymous>)\n    at parseJSONFromBytes (node:internal/deps/undici/undici:5591:19)\n    at successSteps (node:internal/deps/undici/undici:5562:27)\n    at fullyReadBody (node:internal/deps/undici/undici:1665:9)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async specConsumeBody (node:internal/deps/undici/undici:5571:7)\n    at async updateDeploymentStatus (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:290:26)\n    at async Request.<anonymous> (file:///var/www/cargodeployapi.slacky.xyz/k8-comm/dist/utils/k8job.js:199:17)","timestamp":"2025-02-21T04:36:07.023Z"}
