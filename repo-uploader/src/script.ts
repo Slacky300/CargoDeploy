@@ -18,17 +18,20 @@ const ALLOWED_COMMANDS = ["vite build", "react-scripts build", "next build"];
 
 function isValidCommand(cmd: string, packageJson: any): boolean {
   return (
-    ALLOWED_COMMANDS.includes(cmd) &&
+    ALLOWED_COMMANDS.some(allowedCmd => cmd.includes(allowedCmd)) &&
     packageJson.scripts &&
-    Object.values(packageJson.scripts).includes(cmd)
+    Object.values(packageJson.scripts).some(script => typeof script === 'string' && script.includes(cmd))
   );
 }
 
 async function validateAndRunBuild() {
   console.log("🚀 Validating build environment...");
   
-  const outDirPath = path.join(__dirname, "../output");
-  const packageJsonPath = path.join(outDirPath, "package.json");
+  // The output directory is where exec.sh copied the source files
+  const outputPath = path.join("/home/app/output");
+  console.log(`📂 Output directory: ${outputPath}`);
+  
+  const packageJsonPath = path.join(outputPath, "package.json");
   
   if (!fs.existsSync(packageJsonPath)) {
     console.error("❌ package.json not found! Ensure this is a frontend project.");
@@ -44,7 +47,7 @@ async function validateAndRunBuild() {
   }
   
   console.log("🔄 Running secure build process...");
-  const p = exec(`cd ${outDirPath} && npm install && npm run build`);
+  const p = exec(`cd ${outputPath} && npm install && npm run build`);
 
   p.stdout?.on("data", (data) => console.log(`ℹ️ Build log: ${data}`));
   p.stderr?.on("data", (data) => console.error(`⚠️ Build error: ${data}`));
@@ -60,8 +63,8 @@ async function validateAndRunBuild() {
 }
 
 async function uploadBuildFiles() {
-  const distPaths = ["dist", "build"];
-  const outputPath = path.join(__dirname, "../output");
+  const distPaths = ["dist", "build", "out", ".next"];
+  const outputPath = "/home/app/output";
   let buildFolder = distPaths.map(f => path.join(outputPath, f)).find(fs.existsSync);
 
   if (!buildFolder) {

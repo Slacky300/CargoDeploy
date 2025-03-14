@@ -144,6 +144,7 @@ const triggerWebHookForSendingMails = async (email:string, status: string) => {
 
 const saveLogsToDatabase = async (logs: string[], deploymentId: string) => {
     try {
+        console.log("Saving logs to database");
         const res = await fetch(`${process.env.FRONTEND_URL}/api/logs`, {
             method: 'POST',
             headers: {
@@ -294,6 +295,7 @@ const getPodLogs = async (podName: string, channelName: string, email: string): 
 
 const updateDeploymentStatus = async (channelName: string, deploymentId: string, status: string, email: string): Promise<void> => {
     try {
+        console.log("Updating deployment status:", status);
         const nextResult = await fetch(`${process.env.FRONTEND_URL}/api/deployment?deploymentIdWithStatus=${deploymentId}-${status}`, {
             method: "PATCH",
             headers: {
@@ -370,6 +372,9 @@ export const createJob = async (
                                 { name: 'BUILD_COMMAND', value: build_command },
                                 { name: 'INSTALL_COMMAND', value: install_command },
                                 { name: 'COMMIT_SHA', value: commit_sha },
+                                { name: 'S3_ACCESS_KEY', value: process.env.S3_ACCESS_KEY },
+                                { name: 'S3_SECRET_ACCESS_KEY', value: process.env.S3_SECRET_ACCESS_KEY },
+                                { name: 'S3_REGION', value: process.env.S3_REGION},
                                 ...(env_variables ? env_variables.map(envVar => ({ name: envVar.name, value: envVar.value })) : [
                                     { name: 'NAME', value: name },
                                 ]),
