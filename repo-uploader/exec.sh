@@ -14,7 +14,7 @@ fi
 
 # Extract repository information
 REPO_URL_REGEX="https://github.com/([^/]+)/([^/]+).git"
-if [[ $GIT_REPOSITORY_URL =~ $REPO_URL_REGEX ]]; then
+if [[ "$GIT_REPOSITORY_URL" =~ $REPO_URL_REGEX ]]; then
   USERNAME="${BASH_REMATCH[1]}"
   REPO_NAME="${BASH_REMATCH[2]}"
 else
@@ -64,16 +64,12 @@ else
   exit 1
 fi
 
-# Compile TypeScript files
-echo "🛠️ Compiling TypeScript files..."
-npx tsc || {
-  echo "❌ TypeScript compilation error. Resolve issues in your TypeScript code and try again."
+# Ensure the script file is executable
+if [ ! -f "/home/app/script.js" ]; then
+  echo "❌ script.js not found! Compilation may have failed."
   exit 1
-}
+fi
 
 # Execute the main script
 echo "⚙️ Running the main script (script.js)..."
-exec node dist/script.js || {
-  echo "❌ Execution of script.js failed. Check the script or environment configuration."
-  exit 1
-}
+exec node /home/app/script.js
