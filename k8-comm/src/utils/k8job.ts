@@ -338,11 +338,6 @@ export const createJob = async (
     const containerName: string = `s3-upload-container-${uniqueId}`;
     const channelName = `logs:${deploymentId}`;
 
-    console.log("project_name", name);
-
-    console.log('Creating job:', jobName);
-    console.log("channelName", channelName);
-
     const job = {
         apiVersion: 'batch/v1',
         kind: 'Job',
